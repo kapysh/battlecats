@@ -9,4 +9,20 @@
 
 # Make sure your secret_key_base is kept private
 # if you're sharing your code publicly.
-Battlecats::Application.config.secret_key_base = '3d067c6c213916beacaacb041b00bb11faa1e08cf7c40e91c1c67d1286098a46b9e11e0a2f8d0cf07d859ec641ec71c8c77ff59279f4866f2dcdc0c24f755fba'
+
+require 'securerandom'
+
+def secure_token
+  token_file = Rails.root.join('.secret')
+  if File.exist?(token_file)
+    # Use the existing token.
+    File.read(token_file).chomp
+  else
+    # Generate a new token and store it in token_file.
+    token = SecureRandom.hex(64)
+    File.write(token_file, token)
+    token
+  end
+end
+
+Battlecats::Application.config.secret_key_base = secure_token
